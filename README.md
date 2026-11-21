@@ -1,43 +1,60 @@
-# CC: Thaumic
+<div align="center">
 
-Аддон для Minecraft 1.21.1 (NeoForge), що з'єднує **Thaumaturge** і **CC: Tweaked**: комп'ютери читають
-есенцію в банках, тигель, вузли аури та інші блоки з аспектами, а також вис і флюкс аури навколо себе.
-Потрібні обидва моди. Усе лише для читання: CC: Thaumic нічого не змінює у світі.
+# 🔮 CC: Thaumic
 
-## Периферія
+**Thaumaturge for CC: Tweaked computers: essentia, crucibles, aura nodes and the aura itself.**
 
-Став комп'ютер поруч із блоком Thaumaturge (або підключи дротовим модемом) і
-`peripheral.wrap("сторона")` чи `peripheral.find("тип")`.
+![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-62B47A)
+![NeoForge](https://img.shields.io/badge/NeoForge-21.1.x-E67E22)
+![Requires](https://img.shields.io/badge/requires-Thaumaturge%20%2B%20CC%3A%20Tweaked-8E44AD)
+![Version](https://img.shields.io/badge/version-0.1.0-2E86C1)
+![License](https://img.shields.io/badge/license-MIT-27AE60)
 
-| Тип | Блоки | Функції |
+**English** · [Українська](README.uk.md)
+
+</div>
+
+---
+
+Let your computers see the arcane: how much essentia sits in every jar, what is dissolved in the crucible, what
+an aura node holds — and how much vis and flux is in the air around the computer. Count your essentia stock,
+watch for flux before taint spreads, or drive alchemy with Lua. Everything is **read-only**: CC: Thaumic never
+changes the world.
+
+## ✨ Peripherals
+
+Put a computer next to a Thaumaturge block (or connect it with a wired modem) and use
+`peripheral.wrap("side")` or `peripheral.find("type")`.
+
+| Type | Blocks | Functions |
 | --- | --- | --- |
-| `aspect_container` | банки есенції (звичайна, порожнеча, креативна…), алембік, матриця інфузії, п'єдестал підзарядки, дзеркало есенції | `getAspects()`, `getAmount(аспект)`, `getTotal()` |
-| `crucible` (+ `aspect_container`) | тигель | те саме + `getHeat()`, `getWater()`, `getWaterCapacity()` (мБ) |
-| `aura_node` (+ `aspect_container`) | вузол аури | те саме + `getNodeType()`, `getModifier()`, `getBaseAspects()`, `isEnergized()`, `getVis()`, `getFlux()` |
+| `aspect_container` | essentia jars (normal, void, creative…), alembic, infusion matrix, recharge pedestal, essentia mirror | `getAspects()`, `getAmount(aspect)`, `getTotal()` |
+| `crucible` *(+ `aspect_container`)* | crucible | the above + `getHeat()`, `getWater()`, `getWaterCapacity()` (mB) |
+| `aura_node` *(+ `aspect_container`)* | aura node | the above + `getNodeType()`, `getModifier()`, `getBaseAspects()`, `isEnergized()`, `getVis()`, `getFlux()` |
 
-- `getAspects()` повертає таблицю `{ ignis = 12, aqua = 4 }` (найбільше — першим).
-- Аспект можна назвати коротко (`"ignis"`) або повністю (`"thaumaturge:ignis"`).
+- `getAspects()` returns a table like `{ ignis = 12, aqua = 4 }`, largest first.
+- Aspects can be named short (`"ignis"`) or in full (`"thaumaturge:ignis"`).
 - `getNodeType()`: `normal`, `unstable`, `dark`, `tainted`, `hungry`, `pure`; `getModifier()`: `bright`, `pale`,
-  `fading` або `nil`.
+  `fading` or `nil`.
 
-Блоки Thaumaturge без аспектів периферією CC: Thaumic не стають (для них лишаються звичайні можливості
-CC: Tweaked, наприклад інвентарі).
+Thaumaturge blocks without aspects get no CC: Thaumic peripheral, so CC: Tweaked's own generic peripherals
+(inventories and so on) still apply to them.
 
-## API `aura`
+## 🌫️ The `aura` API
 
-На кожному комп'ютері, черепашці й кишеньковому комп'ютері — аура чанка, де вони зараз стоять:
+Every computer, turtle and pocket computer gets an `aura` API for the chunk it is in right now:
 
-| Функція | Що повертає |
+| Function | Returns |
 | --- | --- |
-| `aura.getVis()` | вис у чанку |
-| `aura.getFlux()` | флюкс у чанку |
-| `aura.getBase()` | база аури — до скількох вису чанк відновлюється |
-| `aura.getTotal()` | вис + флюкс |
-| `aura.getFluxSaturation()` | насиченість флюксом (понад 1 — росте порча) |
+| `aura.getVis()` | vis in the chunk |
+| `aura.getFlux()` | flux in the chunk |
+| `aura.getBase()` | the base aura — how much vis the chunk regrows to |
+| `aura.getTotal()` | vis + flux |
+| `aura.getFluxSaturation()` | how saturated the chunk is with flux (above 1, taint grows) |
 
-## Приклади
+## 🚀 Examples
 
-### Склад есенції: усі банки в мережі
+### Essentia stock across the whole network
 
 ```lua
 local total = {}
@@ -51,42 +68,55 @@ end
 for aspect, amount in pairs(total) do print(aspect, amount) end
 ```
 
-### Сигнал, коли флюкс у чанку зростає
+### Flux alarm
 
 ```lua
 while true do
   local sat = aura.getFluxSaturation()
-  redstone.setOutput("top", sat > 0.5)   -- лампа/сирена зверху
-  print(("вис %.1f  флюкс %.1f  (%.0f%%)"):format(aura.getVis(), aura.getFlux(), sat * 100))
+  redstone.setOutput("top", sat > 0.5)   -- a lamp or siren on top
+  print(("vis %.1f  flux %.1f  (%.0f%%)"):format(aura.getVis(), aura.getFlux(), sat * 100))
   sleep(5)
 end
 ```
 
-## Збірка й тести
+> 💡 With [CC: CSharp](https://github.com/Fryzs/CCCSharp) you can write the same programs in C#:
+> `Aura.GetFluxSaturation()`, `Peripheral.Find("crucible").GetHeat()`.
+
+## 📦 Installation
+
+| | |
+| --- | --- |
+| Minecraft | 1.21.1 |
+| Loader | NeoForge 21.1.x |
+| Required | Thaumaturge ≥ 1.1.0 (with Curios and Lithostitched), CC: Tweaked ≥ 1.110 |
+| Side | **server** (and single player); clients joining a server do not need it |
+
+Drop `ccthaumic-0.1.0.jar` into the `mods` folder.
+
+Works alongside [Create: Thaumaturgy](https://www.curseforge.com/minecraft/mc-mods/createthaumaturgy): the whole
+TiTy Aeronautics pack with both mods loads and passes the tests.
+
+## 🛠️ Building and tests
 
 ```
 ./gradlew build
 ./gradlew runGameTestServer
 ```
 
-`runGameTestServer` — сервер **без вікна**: ставить банку (і наливає в неї ignis), тигель, вузол і звичайний
-блок, перевіряє, що CC: Tweaked бачить правильну периферію з правильними значеннями, перевіряє API `aura`,
-і сам завершується.
+`runGameTestServer` starts a **headless** server (no window): it places a jar (and pours ignis into it), a crucible,
+an aura node and a plain block, checks that CC: Tweaked sees the right peripheral with the right values, tests the
+`aura` API, and exits.
 
-Для компіляції потрібен jar Thaumaturge у `libs/` (локально; не комітиться й не входить у мод). API
-CC: Tweaked береться з `maven.squiddev.cc`. Для тестів у `run/mods`: Thaumaturge, Curios, Lithostitched,
-CC: Tweaked.
+Compiling needs the Thaumaturge jar in `libs/` (local only: never committed, never shipped). The CC: Tweaked API
+comes from `maven.squiddev.cc`. For the tests, `run/mods` holds Thaumaturge, Curios, Lithostitched and CC: Tweaked.
 
-Jar: `build/libs/ccthaumic-0.1.0.jar` — ставиться на сервер (і в одиночну гру); клієнтам на сервері
-не обов'язковий.
+## 🧩 How it works
 
-## Як влаштовано
+Peripherals are registered through CC: Tweaked's public `PeripheralCapability` for Thaumaturge blocks that have its
+`AspectCapabilities.CONTAINER` capability. The `aura` API uses `ComputerCraftAPI.registerAPIFactory` and
+Thaumaturge's public `AuraHelper`. No code from other mods is copied.
 
-Периферія реєструється через публічну `PeripheralCapability` CC: Tweaked для блоків Thaumaturge, у яких є
-його можливість `AspectCapabilities.CONTAINER`. API `aura` — через `ComputerCraftAPI.registerAPIFactory` і
-публічний `AuraHelper` Thaumaturge. Код інших модів не копіюється.
+## 📄 License
 
-## Ліцензія
-
-Код CC: Thaumic — [MIT](LICENSE). Thaumaturge і CC: Tweaked — окремі проєкти під своїми ліцензіями;
-жодна їхня частина сюди не входить.
+The CC: Thaumic code is [MIT](LICENSE). Thaumaturge and CC: Tweaked are separate projects under their own licenses;
+no part of them is included here.
